@@ -20,13 +20,14 @@ if(window.addEventListener) {
           alert('Error: no canvas.getContext!');
           return;
         }
-    
         // Get the 2D canvas context.
         context = canvas.getContext('2d');
         if (!context) {
           alert('Error: failed to getContext!');
           return;
         }
+        context.canvas.width = window.innerWidth;
+        context.canvas.height = window.innerHeight;
     
         // Attach the mousemove event handler.
         canvas.addEventListener('mousemove', ev_mousemove, false);
