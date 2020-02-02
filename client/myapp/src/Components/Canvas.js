@@ -26,7 +26,7 @@ class Canvas extends Component {
   }
 
   _onMouseMove(e) {
-      if(this.state.x === 0 && this.state.y === 0){
+      if(this.state.userLastPoint.x === 0 && this.state.userLastPoint.y === 0){
         this.state.userLastPoint.x = e.nativeEvent.offsetX;
         this.state.userLastPoint.y = e.nativeEvent.offsetY;
       }
@@ -77,31 +77,31 @@ class Canvas extends Component {
     );
   }
 
-  attachSound(){
-    // attach decibel
-    const meter = new DecibelMeter('unique-id');
-    meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)}));
-
-    // attach pitch
-    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    let analyserNode = audioContext.createAnalyser();
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        let sourceNode = audioContext.createMediaStreamSource(stream);
-        sourceNode.connect(analyserNode);
-    });
-
-    function samplePitch(_this, analyserNode, sampleRate) {
-        let data = new Float32Array(analyserNode.fftSize);
-        analyserNode.getFloatTimeDomainData(data);
-        let [pitch, clarity] = findPitch(data, sampleRate);
-
-        if (clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 10){
-            _this.setState({..._this.state, clarity: clarity, pitch: pitch});
-        }
-        _this.setState({..._this.state, _pitchLast: pitch});
-    };
-    this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 80);
-  }
+  // attachSound(){
+  //   // attach decibel
+  //   const meter = new DecibelMeter('unique-id');
+  //   meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)}));
+  //
+  //   // attach pitch
+  //   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  //   let analyserNode = audioContext.createAnalyser();
+  //   navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+  //       let sourceNode = audioContext.createMediaStreamSource(stream);
+  //       sourceNode.connect(analyserNode);
+  //   });
+  //
+  //   function samplePitch(_this, analyserNode, sampleRate) {
+  //       let data = new Float32Array(analyserNode.fftSize);
+  //       analyserNode.getFloatTimeDomainData(data);
+  //       let [pitch, clarity] = findPitch(data, sampleRate);
+  //
+  //       if (clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 10){
+  //           _this.setState({..._this.state, clarity: clarity, pitch: pitch});
+  //       }
+  //       _this.setState({..._this.state, _pitchLast: pitch});
+  //   };
+  //   this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 80);
+  // }
 
   render() {
     return (
