@@ -10,14 +10,14 @@ class CanvasContainer extends Component {
 
     chooseColor(color) {
         this.setState({color: color})
-        this.state.color = color;
         console.log(this.state.color);
         // pass color to parent
     }
 
     render() {
         return (
-            <div>
+            <div className="game-container">
+                {/* <div style="width: 100%">Pick a Color</div> */}
                 <div className="colors">
                     <div className="color black" onClick={() => this.chooseColor('black')}></div>
                     <div className="color red" onClick={() => this.chooseColor('red')}></div>
@@ -25,7 +25,8 @@ class CanvasContainer extends Component {
                     <div className="color blue" onClick={() => this.chooseColor('blue')}></div>
                     <div className="color yellow" onClick={() => this.chooseColor('yellow')}></div>
                 </div>
-                <Canvas color={this.state.color}/>
+                
+                <Canvas className="canvas" color={this.state.color}/>
             </div>
 
         );
