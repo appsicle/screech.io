@@ -14,7 +14,7 @@ import Timer from 'react-compound-timer';
 
 let images = [panda, gary, circle, square, triangle, shrek, flower];
 let image = images[Math.floor(Math.random()*images.length)];
-const playTime = 30000;
+const playTime = 3000;
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
 class CanvasContainer extends Component {
@@ -74,6 +74,11 @@ class CanvasContainer extends Component {
         this.setState({stopped: true});
     };
 
+    stopGame = () => {
+      console.log('stopped');
+      this.stop();
+    }
+
   render() {
     return (<div className="game-container">
       <div>
@@ -107,9 +112,6 @@ class CanvasContainer extends Component {
 
         <img src={image}></img>
         <Table className="table" username={this.props.username}></Table>
-        {/* <Button onClick={this.stop} disabled={!this.state.isRecording}>
-          Done
-      </Button> */}
         <audio src={this.state.blobURL} controls="controls" />
       </div>
       <Canvas className="canvas" color={this.state.color} />
