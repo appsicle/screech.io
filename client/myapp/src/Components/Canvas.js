@@ -14,7 +14,10 @@ class Canvas extends Component {
     }
 
     _onMouseMove(e) {
-
+        if(this.state.x === 0 && this.state.y === 0){
+          this.state.x = e.nativeEvent.offsetX;
+          this.state.y = e.nativeEvent.offsetY;
+        }
         this.drawLine(this.state.x, this.state.y, e.nativeEvent.offsetX, e.nativeEvent.offsetY, 'black', true);
         this.setState({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
         // this.setState({x: e.clientX||e.touches[0].clientX});
