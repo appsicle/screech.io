@@ -19,8 +19,10 @@ class Table extends Component {
         this.socket.on(
             "listen_for_usernames",
             (data) => {
-                // console.log("here", data);
-                this.setState({players: data});
+                let usernames = data.map((datum) => {
+                    return datum.username;
+                });
+                this.setState({players: usernames});
             }
         );
         this.socket.emit("notify_new_user", this.props.username);

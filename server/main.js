@@ -18,7 +18,12 @@ app.use(express.static(__dirname + '/../client'));
 //   socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
 // }
 
-let usernames = [];
+// let usernames = [];
+
+// [{username: username, color: colors[counter++ % colors.length]}]
+let userInfo = [];
+const colors = ['black', 'red', 'green', 'blue', 'yellow', 'gold', 'teal', 'brown', 'dark-orange', 'pink'];
+let counter = 0
 
 // let images = [panda, gary, circle, square, triangle, shrek, flower];
 // let image = images[Math.floor(Math.random()*images.length)];
@@ -42,7 +47,12 @@ io.on("connection", socket => {
 
   socket.on("notify_new_user", data => {
     // console.log(">>", data);
-    usernames.push(data);
-    io.sockets.emit("listen_for_usernames", usernames);
+    // usernames.push(data);
+    // io.sockets.emit("listen_for_usernames", usernames);
+    userInfo.push({
+      username: data,
+      color: colors[counter++ % colors.length],
+    });
+    io.sockets.emit("listen_for_usernames", userInfo);
   })
 });
