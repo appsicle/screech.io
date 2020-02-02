@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 
 class Canvas extends Component {
+
+  draw(){
+    console.log('hi')
+  }
+
   render() {
     return (
-      <div id="container">
+      <div id="container" >
           <canvas id="imageView">
               <p>Unfortunately, your browser is currently unsupported by our web application. We are sorry for the
                   inconvenience. Please use one of the supported browsers listed below, or draw the image you want using

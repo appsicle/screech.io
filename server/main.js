@@ -1,25 +1,15 @@
-var express = require('express')
-var app = express();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
+const express = require('express');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/../client'));
 
-app.get('/', function (req, res) {
-    res.sendFile('/client/index.html', { root : '../'});
-});
+function onConnection(socket){
+  socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
+}
 
-io.on('connection', function (socket) {
-    console.log('a user connected');
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
-    });
-    socket.on('chat message', function (msg) {
-        io.emit('chat message', msg);
-    });
-});
+io.on('connection', onConnection);
 
-
-http.listen(3000, function () {
-    console.log('listening on *:3000');
-});
+http.listen(port, () => console.log('listening on port ' + port));
