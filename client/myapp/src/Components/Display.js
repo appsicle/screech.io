@@ -3,14 +3,20 @@ import io from 'socket.io-client';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+
+
 import CanvasContainer from './CanvasContainer'
+import {serverAddress} from '../properties'
+import Lobby from './Lobby'
 
 class Display extends Component {
-  socket = io("http://3b2e338d.ngrok.io");
+  socket = io(serverAddress);
   constructor(props) {
     super(props);
     this.state = {
-      page: 0,
+      page: 0, 
       input: "",
     };
     this.submitClicked = this.submitClicked.bind(this);
@@ -19,6 +25,10 @@ class Display extends Component {
   submitClicked() {
     this.setState({page: 1});
     this.nameSocketSend();
+  }
+
+  nextPage(){
+    this.setState({page: 2});
   }
 
   getName = (e) => {
@@ -40,22 +50,43 @@ class Display extends Component {
       dis = (<Grid
         container
         direction="row"
-        justify="row"
+        justify="center"
         alignItems="center"
       >
-        <Grid item xs = {12} style={{marginBottom: "100px"}}>
+        <Grid item xs = {12} style={{marginBottom: "50px"}}>
           <h1>SCREECH IO</h1>
         </Grid>
-        <Grid item xs = {12} style={{marginBottom: "20px"}}>
-          {/* <h2 style={{display: "inline"}}>Login:</h2><TextField style={{display: "inline"}}/> */}
-          <h2 style={{display: "inline"}}>Login:</h2><TextField onChange={this.getName} style={{display: "inline"}}/>
-        </Grid>
-        <Grid item xs = {12}>
-          <Button onClick={this.submitClicked}>Submit</Button>
-        </Grid>
+        <Grid
+        container
+        direction="row"
+        justify="center"
+        alignItems="center"
+      >
+
+        <Paper elevation={3}>
+        <Box width={1}> 
+          <Grid item xs = {12} style={{marginBottom: "0px"}}>
+            <h2>Login</h2>
+          </Grid>
+          <Grid item xs = {12} style={{marginBottom: "20px"}}>
+            <div style={{padding: "0px 40px 20px"}}>
+              <h3 style={{display: "inline"}}>Name: </h3><TextField onChange={this.getName} style={{display: "inline"}}/>
+            </div>
+          </Grid>
+          <Grid item xs = {12}>
+            <Button onClick={this.submitClicked} style={{marginBottom: "20px"}}>Join Lobby</Button>
+          </Grid>
+          </Box>
+
+        </Paper>
+        
+      </Grid>
       </Grid>)
-    }else{
-      dis = <CanvasContainer username={this.state.input}/>
+    }else if (this.state.page === 1){
+      dis = <Lobby username={this.state.input} socket={this.socket} nextPage={this.nextPage.bind(this)} />
+    }
+    else{
+      dis = <CanvasContainer username={this.state.input} socket={this.socket}/>
     }
     return(
       <div>

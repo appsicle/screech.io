@@ -9,13 +9,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import {serverAddress} from '../properties'
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 class Canvas extends Component {
-  socket = io("http://3b2e338d.ngrok.io");
+  // socket = io(serverAddress);
 
   constructor(props) {
     super(props);
@@ -34,6 +36,8 @@ class Canvas extends Component {
       lineWidth: 4,
 
     };
+
+    this.socket = this.props.socket;
   }
 
   componentDidMount() {

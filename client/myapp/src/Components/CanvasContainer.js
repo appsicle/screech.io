@@ -12,16 +12,19 @@ import Button from '@material-ui/core/Button';
 // import flower from '../images/flower.png';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
+import {serverAddress} from '../properties';
+
 
 // let images = [panda, gary, circle, square, triangle, shrek, flower];
 // let image = images[Math.floor(Math.random() * images.length)];
 const playTime = 30000;
+
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
 
 
 class CanvasContainer extends Component {
-  socket = io("http://3b2e338d.ngrok.io");
+//   socket = io(serverAddress);
   constructor(props) {
     super(props);
     this.state = {
@@ -29,8 +32,10 @@ class CanvasContainer extends Component {
       isRecording: false,
       blobURL: '',
       isBlocked: false,
-      stopped: false
+      stopped: false,
+      gotColor: false,
     };
+    this.socket = this.props.socket;
   }
 
   componentDidMount() {
@@ -54,6 +59,7 @@ class CanvasContainer extends Component {
     this.socket.on(
         "listen_for_usernames",
         (data) => {
+            console.log(data);
             if (!this.state.gotColor) {
                 this.setState({color: data[data.length - 1].color})
                 this.state.gotColor = true;
@@ -61,7 +67,7 @@ class CanvasContainer extends Component {
         }
     );
     // this.socket.emit("notify_new_user", this.props.username);
-}
+    }
 
   // chooseColor(color) {
   //   this.setState({ color: color })
@@ -110,26 +116,12 @@ class CanvasContainer extends Component {
             <Timer.Seconds /> seconds left
           </div>
         </Timer>
-        {/* <div className="color-header">Pick a color</div> */}
-        <div className="colors">
-          {/* <div className="color black" onClick={() => this.chooseColor('black')}></div>
-          <div className="color red" onClick={() => this.chooseColor('red')}></div>
-          <div className="color green" onClick={() => this.chooseColor('green')}></div>
-          <div className="color blue" onClick={() => this.chooseColor('blue')}></div>
-          <div className="color yellow" onClick={() => this.chooseColor('darkorange')}></div>
-          <div className="color brown" onClick={() => this.chooseColor('brown')}></div>
-          <div className="color purple" onClick={() => this.chooseColor('purple')}></div>
-          <div className="color gold" onClick={() => this.chooseColor('gold')}></div>
-          <div className="color teal" onClick={() => this.chooseColor('teal')}></div> */}
-        </div>
-        {/* <p>Try to draw this!</p> */}
-
-        {/* <img src={image}></img> */}
-        <Table className="table" username={this.props.username}></Table>
+        <div className="colors"></div>
+        <Table className="table" socket={this.socket} username={this.props.username}></Table>
       </div>
-      <Canvas className="canvas" color={this.state.color} stopped={this.state.stopped} audioPlayer={<audio src={this.state.blobURL} controls="controls" />} />
+      <Canvas className="canvas" socket={this.socket} color={this.state.color} stopped={this.state.stopped} audioPlayer={<audio src={this.state.blobURL} controls="controls" />} />
     </div>);
   }
-}
+};
 
 export default CanvasContainer;
