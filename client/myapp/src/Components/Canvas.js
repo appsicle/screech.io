@@ -12,16 +12,17 @@ class Canvas extends Component {
     this.state = {
       // page: 0, 
       // canvas: null,
-      userLastPoint : {x: 0, y: 0, color: props.color},
+      userLastPoint : {x: 0, y: 0, color: this.props.color},
     };
   }
 
   componentDidMount() {
-    // this.state.canvas = this.refs.canvas;
     this.attachSocketReceiver();
-    // this.socket.emit("line", {x0: 0, y0: 0,
-    //   x1: 100, y1: 100, 
-    //   color: "red"});
+    const canvas = this.refs.canvas;
+    const context = canvas.getContext("2d");
+    const sidebar = document.querySelector('.colors');
+    context.canvas.width = window.innerWidth - sidebar.offsetWidth;
+    context.canvas.height = window.innerHeight - 10;
   }
 
   _onMouseMove(e) {
@@ -71,9 +72,35 @@ class Canvas extends Component {
       "line",
       (data) => {
         // console.log(data);
-        this.drawLine(data.x0, data.y0, data.x1, data.y1);
+        this.drawLine(data.x0, data.y0, data.x1, data.y1, data.color);
       }
     );
+  }
+
+  attachSound(){
+    // attach decibel
+    const meter = new DecibelMeter('unique-id');
+    meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)}));
+
+    // attach pitch
+    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let analyserNode = audioContext.createAnalyser();
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        let sourceNode = audioContext.createMediaStreamSource(stream);
+        sourceNode.connect(analyserNode); 
+    });
+
+    function samplePitch(_this, analyserNode, sampleRate) {
+        let data = new Float32Array(analyserNode.fftSize);
+        analyserNode.getFloatTimeDomainData(data);
+        let [pitch, clarity] = findPitch(data, sampleRate);
+      
+        if (clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 10){
+            _this.setState({..._this.state, clarity: clarity, pitch: pitch});
+        }
+        _this.setState({..._this.state, _pitchLast: pitch});  
+    };
+    this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 80);
   }
 
   render() {
