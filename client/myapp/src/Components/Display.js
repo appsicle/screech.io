@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 // import Login from './Components/Login';
-import Canvas from './Canvas';
+import CanvasContainer from './CanvasContainer'
 
 class Display extends Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class Display extends Component {
         </Grid>
       </Grid>)
     }else{
-      dis = <Canvas/>
+      dis = <CanvasContainer/>
     }
     return(
       <div>
