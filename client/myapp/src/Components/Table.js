@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 
 class Table extends Component {
-    socket = io("localhost:4000");
+    socket = io("http://3b2e338d.ngrok.io");
     constructor(props) {
         super(props);
         this.state = {

@@ -18,8 +18,10 @@ import io from 'socket.io-client';
 const playTime = 30000;
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
+
+
 class CanvasContainer extends Component {
-  socket = io("localhost:4000");
+  socket = io("http://3b2e338d.ngrok.io");
   constructor(props) {
     super(props);
     this.state = {

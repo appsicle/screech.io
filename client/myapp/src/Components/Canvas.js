@@ -15,7 +15,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 class Canvas extends Component {
-  socket = io("localhost:4000");
+  socket = io("http://3b2e338d.ngrok.io");
 
   constructor(props) {
     super(props);
@@ -187,17 +187,16 @@ class Canvas extends Component {
         <div>
         <img src={this.state.image}/>
         <Dialog
-        fullWidth={true}
-        maxWidth={'xl'}
+        fullScreen
         open={this.state.dialogOpen}
-        TransitionComponent={this.Transition}
+        TransitionComponent={Transition}
         keepMounted
         onClose={this.handleClose}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle id="alert-dialog-slide-title">{"Game has ended!"}</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{overflow: 'hidden'}}>
           <DialogContentText id="alert-dialog-slide-description">
             blah blah this color won.
             Display percentages.
