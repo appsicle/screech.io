@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
+import DecibelMeter from 'decibel-meter';
+import { findPitch } from 'pitchy';  
 
 class Canvas extends Component {
   socket = io("localhost:4000");
@@ -10,6 +12,11 @@ class Canvas extends Component {
     super(props);
 
     this.state = {
+      pitch: 0,
+      _pitchLast: 0,
+      decibel: 0 ,
+      last_x: 150,
+      last_y: 150,
       // page: 0, 
       // canvas: null,
       userLastPoint : {x: 0, y: 0, color: this.props.color},
@@ -17,6 +24,7 @@ class Canvas extends Component {
   }
 
   componentDidMount() {
+    this.attachSound();
     this.attachSocketReceiver();
     const canvas = this.refs.canvas;
     const context = canvas.getContext("2d");
@@ -39,12 +47,14 @@ class Canvas extends Component {
       // console.log(this.state)
 
       // console.log("stuff");
-      this.socket.emit("line",
-        {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
-        x1: e.nativeEvent.offsetX, y1: e.nativeEvent.offsetY, 
-        color: this.props.color});
+      // this.socket.emit("line",
+      //   {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
+      //   x1: e.nativeEvent.offsetX, y1: e.nativeEvent.offsetY, 
+      //   color: this.props.color});
 
-      this.setState({userLastPoint : {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY}});
+      // this.setState({userLastPoint : {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY}});
+
+      this.sendInput(e.nativeEvent.offsetX, e.nativeEvent.offsetY, this.props.color);
   }
 
   drawLine(x0, y0, x1, y1, color) {
@@ -77,10 +87,18 @@ class Canvas extends Component {
     );
   }
 
-  attachSound(){
+  sendInput = (x, y, color) => {
+    this.socket.emit("line",
+        {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
+        x1: x, y1: y, color});
+
+      this.setState({userLastPoint : {x, y}});
+  }
+
+  attachSound = () => {
     // attach decibel
     const meter = new DecibelMeter('unique-id');
-    meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)}));
+    meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)*15}));
 
     // attach pitch
     let audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -95,20 +113,37 @@ class Canvas extends Component {
         analyserNode.getFloatTimeDomainData(data);
         let [pitch, clarity] = findPitch(data, sampleRate);
       
-        if (clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 10){
+        let y_change;
+        let x_change;
+        if (clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 30){
             _this.setState({..._this.state, clarity: clarity, pitch: pitch});
+            y_change = Math.sin((pitch-200)/2.2222) * 5;
+            x_change = Math.cos((pitch-200)/2.2222) * 5;
         }
-        _this.setState({..._this.state, _pitchLast: pitch});  
+        y_change = 5;
+        x_change = 5;
+        // _this.sendInput(_this.state.pitch, _this.state.decibel, _this.props.color);
+        _this.sendInput(_this.last_x + x_change, _this.last_y + y_change, _this.props.color);
+
+        _this.setState({..._this.state, _pitchLast: pitch, last_x: _this.last_x + x_change, last_y: _this.last_y + y_change});  
+
+        // _this.setState({..._this.state, _pitchLast: pitch});  
     };
-    this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 80);
+
+    this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 100);
+
+    // this.interval3 = setInterval(() => this.sendInput(this.state.pitch, this.state.decibel, this.props.color), 100);
   }
 
   render() {
     return (
       <div id="container" >
         <canvas ref="canvas" id="imageView" onMouseMove={this._onMouseMove.bind(this)} style={{ "borderLeft": "1px solid black" }}>
-
         </canvas>
+        <p id="pitch">{this.state.pitch}</p>
+       <p id="decibel">{this.state.decibel}</p>
+       <p id="x_last">{this.state.x_last}</p>
+       <p id="y_last">{this.state.y_last}</p>
       </div>
     );
   }
