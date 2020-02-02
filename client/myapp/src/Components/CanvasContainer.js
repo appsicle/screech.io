@@ -13,71 +13,66 @@ import flower from '../images/flower.png';
 import Timer from 'react-compound-timer';
 
 let images = [panda, gary, circle, square, triangle, shrek, flower];
-let image = images[Math.floor(Math.random()*images.length)];
-const playTime = 3000;
+let image = images[Math.floor(Math.random() * images.length)];
+const playTime = 30000;
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
 class CanvasContainer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          color: 'black',
-          isRecording: false,
-          blobURL: '',
-          isBlocked: false,
-          stopped: false
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      color: 'black',
+      isRecording: false,
+      blobURL: '',
+      isBlocked: false,
+      stopped: false
+    };
+  }
 
-    componentDidMount(){
-      navigator.getUserMedia({ audio: true },
-        () => {
-          console.log('Permission Granted');
-          this.setState({ isBlocked: false });
-        },
-        () => {
-          console.log('Permission Denied');
-          this.setState({ isBlocked: true })
-        },
-      );
-
-      this.start();
-    }
-
-    chooseColor(color) {
-        this.setState({ color: color })
-        // this.state.color = color;
-        console.log(this.state.color);
-    }
-
-    start = () => {
-      if (this.state.isBlocked) {
+  componentDidMount() {
+    navigator.getUserMedia({ audio: true },
+      () => {
+        console.log('Permission Granted');
+        this.setState({ isBlocked: false });
+      },
+      () => {
         console.log('Permission Denied');
-      } else {
-        Mp3Recorder
-          .start()
-          .then(() => {
-            this.setState({ isRecording: true });
-          }).catch((e) => console.error(e));
-      }
+        this.setState({ isBlocked: true })
+      },
+    );
 
-    };
+    this.start();
+  }
 
-    stop = () => {
+  chooseColor(color) {
+    this.setState({ color: color })
+    // this.state.color = color;
+    console.log(this.state.color);
+  }
+
+  start = () => {
+    if (this.state.isBlocked) {
+      console.log('Permission Denied');
+    } else {
       Mp3Recorder
-        .stop()
-        .getMp3()
-        .then(([buffer, blob]) => {
-          const blobURL = URL.createObjectURL(blob)
-          this.setState({ blobURL, isRecording: false });
-        }).catch((e) => console.log(e));
-        this.setState({stopped: true});
-    };
-
-    stopGame = () => {
-      console.log('stopped');
-      this.stop();
+        .start()
+        .then(() => {
+          this.setState({ isRecording: true });
+        }).catch((e) => console.error(e));
     }
+
+  };
+
+  stop = () => {
+    Mp3Recorder
+      .stop()
+      .getMp3()
+      .then(([buffer, blob]) => {
+        const blobURL = URL.createObjectURL(blob)
+        this.setState({ blobURL, isRecording: false });
+      }).catch((e) => console.log(e));
+    this.setState({ stopped: true });
+  };
 
   render() {
     return (<div className="game-container">
@@ -88,7 +83,7 @@ class CanvasContainer extends Component {
           checkpoints={[
             {
               time: 0,
-              callback: this.stopGame,
+              callback: this.stop,
             }
           ]}
         >
@@ -112,9 +107,8 @@ class CanvasContainer extends Component {
 
         <img src={image}></img>
         <Table className="table" username={this.props.username}></Table>
-        <audio src={this.state.blobURL} controls="controls" />
       </div>
-      <Canvas className="canvas" color={this.state.color} />
+      <Canvas className="canvas" color={this.state.color} stopped={this.state.stopped} audioPlayer={<audio src={this.state.blobURL} controls="controls" />} />
     </div>);
   }
 }
