@@ -27,13 +27,23 @@ code {
   display: flex;
 }
 
-.canvas{
-  /* flex:1; */
+.sidebar-container{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 .game-container{
   display: flex;
 
+}
+
+.image{
+  margin-bottom: 100px;
+}
+
+.draw-this{
+  font-size: 30px;
 }
 
 .color-header{
