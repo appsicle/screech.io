@@ -12,16 +12,12 @@ class Canvas extends Component {
     super(props);
 
     this.state = {
-<<<<<<< HEAD
       pitch: 0,
       _pitchLast: 0,
       decibel: 0 ,
       last_x: 150,
       last_y: 150,
       // page: 0, 
-=======
-      // page: 0,
->>>>>>> 6a661694bf4e97a862da08b37836b700ec56323c
       // canvas: null,
       userLastPoint : {x: 0, y: 0, color: this.props.color},
     };
@@ -51,19 +47,12 @@ class Canvas extends Component {
       // console.log(this.state)
 
       // console.log("stuff");
-<<<<<<< HEAD
       // this.socket.emit("line",
       //   {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
       //   x1: e.nativeEvent.offsetX, y1: e.nativeEvent.offsetY, 
       //   color: this.props.color});
 
       // this.setState({userLastPoint : {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY}});
-=======
-      this.socket.emit("line",
-        {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
-        x1: e.nativeEvent.offsetX, y1: e.nativeEvent.offsetY,
-        color: this.props.color});
->>>>>>> 6a661694bf4e97a862da08b37836b700ec56323c
 
       this.sendInput(e.nativeEvent.offsetX, e.nativeEvent.offsetY, this.props.color);
   }
@@ -98,7 +87,6 @@ class Canvas extends Component {
     );
   }
 
-<<<<<<< HEAD
   sendInput = (x, y, color) => {
     this.socket.emit("line",
         {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
@@ -146,33 +134,6 @@ class Canvas extends Component {
 
     // this.interval3 = setInterval(() => this.sendInput(this.state.pitch, this.state.decibel, this.props.color), 100);
   }
-=======
-  // attachSound(){
-  //   // attach decibel
-  //   const meter = new DecibelMeter('unique-id');
-  //   meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)}));
-  //
-  //   // attach pitch
-  //   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  //   let analyserNode = audioContext.createAnalyser();
-  //   navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-  //       let sourceNode = audioContext.createMediaStreamSource(stream);
-  //       sourceNode.connect(analyserNode);
-  //   });
-  //
-  //   function samplePitch(_this, analyserNode, sampleRate) {
-  //       let data = new Float32Array(analyserNode.fftSize);
-  //       analyserNode.getFloatTimeDomainData(data);
-  //       let [pitch, clarity] = findPitch(data, sampleRate);
-  //
-  //       if (clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 10){
-  //           _this.setState({..._this.state, clarity: clarity, pitch: pitch});
-  //       }
-  //       _this.setState({..._this.state, _pitchLast: pitch});
-  //   };
-  //   this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 80);
-  // }
->>>>>>> 6a661694bf4e97a862da08b37836b700ec56323c
 
   render() {
     return (
