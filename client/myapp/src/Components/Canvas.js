@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
 import DecibelMeter from 'decibel-meter';
-import { findPitch } from 'pitchy';  
+import { findPitch } from 'pitchy';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 class Canvas extends Component {
   socket = io("http://3b2e338d.ngrok.io");
@@ -18,38 +28,42 @@ class Canvas extends Component {
       last_y: 0,
       angle: 45,
       userLastPoint : {x: 0, y: 0, color: this.props.color},
-      lineWidth: 4,
+      calledSCFunction: false,
+      image: null,
+      dialogOpen: false,
 
     };
   }
 
   componentDidMount() {
-    
-    
     const canvas = this.refs.canvas;
-    
+
     const context = canvas.getContext("2d");
     const sidebar = document.querySelector('.colors');
     context.canvas.width = window.innerWidth - sidebar.offsetWidth;
     context.canvas.height = window.innerHeight - 10;
-    // context.lineWidth = 500;
+    context.lineWidth = 500;
 
     context.beginPath();
     context.moveTo(canvas.offsetWidth/2, canvas.offsetHeight/2);
     context.lineTo(canvas.offsetWidth/2, canvas.offsetHeight/2);
     context.closePath();
 
-
     this.state.last_x = canvas.offsetWidth/2;
     this.state.last_y = canvas.offsetHeight/2;
     this.attachSound();
     this.attachSocketReceiver();
-
-
   }
 
+  handleOpen = () => {
+    this.setState({dialogOpen: true});
+  }
 
-  drawLine(x0, y0, x1, y1, color, width) {
+  handleClose = () => {
+    this.setState({dialogOpen: false});
+  }
+
+  drawLine(x0, y0, x1, y1, color) {
     // console.log(x0,y0,x1,y1);
     const canvas = this.refs.canvas
     const context = canvas.getContext("2d");
@@ -58,9 +72,7 @@ class Canvas extends Component {
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
     context.strokeStyle = color;
-    // console.log("here3", width);
-    // context.lineWidth = 4;
-    context.lineWidth = width;
+    context.lineWidth = 4;
     context.stroke();
     context.closePath();
   }
@@ -69,15 +81,15 @@ class Canvas extends Component {
     this.socket.on(
       "line",
       (data) => {
-        this.drawLine(data.x0, data.y0, data.x1, data.y1, data.color, data.width);
+        this.drawLine(data.x0, data.y0, data.x1, data.y1, data.color);
       }
     );
   }
 
-  sendInput = (x, y, color, width) => {
+  sendInput = (x, y, color) => {
     this.socket.emit("line",
         {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
-        x1: x, y1: y, color, width});
+        x1: x, y1: y, color});
 
       this.setState({userLastPoint : {x, y}});
   }
@@ -96,11 +108,8 @@ class Canvas extends Component {
     });
     let canvas = this.refs.canvas;
     function samplePitch(_this, analyserNode, sampleRate) {
-        _this.setState({lineWidth: 4 + (_this.state.decibel * 0.5)});
-        // console.log(JSON.stringify(_this.state, null, 2));
-
         let data = new Float32Array(analyserNode.fftSize);
-        
+
         analyserNode.getFloatTimeDomainData(data);
         let [pitch, clarity] = findPitch(data, sampleRate);
         let pitch_change = 0;
@@ -122,12 +131,11 @@ class Canvas extends Component {
         }
 
         // console.log('here1',_this.state.last_x, x_change, _this.state.last_y, y_change)
-        
 
-        
-        _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color, _this.state.lineWidth);
-        // _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color, 4);
-        _this.setState({..._this.state, angle: _this.state.angle + pitch_change, _pitchLast: pitch, last_x: _this.state.last_x + x_change, last_y: _this.state.last_y + y_change});  
+
+
+        _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color);
+        _this.setState({..._this.state, angle: _this.state.angle + pitch_change, _pitchLast: pitch, last_x: _this.state.last_x + x_change, last_y: _this.state.last_y + y_change});
 
         if(_this.state.last_x < 0){
           _this.setState({angle: _this.state.angle + 180})
@@ -146,16 +154,70 @@ class Canvas extends Component {
           // _this.setState({last_y: _this.state.last_y*-1});
         }
     };
-    
 
     this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 100);
 
   }
 
+  kys = () => {
+    if(!this.state.calledSCFunction){
+      const canvas = this.refs.canvas;
+      var img    = canvas.toDataURL("image/png");
+      this.socket.removeAllListeners("line");
+      this.setState({image: img});
+      this.setState({calledSCFunction: true});
+      this.setState({dialogOpen: true});
+    }
+  }
+
   render() {
-    return (
-      <div id="container" >
-        
+    if(this.props.stopped){
+      // console.log("here");
+      this.kys();
+
+    }
+    let display;
+    if(this.state.calledSCFunction){
+      display = (
+        <div>
+        <img src={this.state.image}/>
+        <Dialog
+        fullWidth={true}
+        maxWidth={'xl'}
+        open={this.state.dialogOpen}
+        TransitionComponent={this.Transition}
+        keepMounted
+        onClose={this.handleClose}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Game has ended!"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            blah blah this color won.
+            Display percentages.
+            Take a look at your recording and screenshot!
+            <img src={this.state.image}/>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <a href={this.state.image} download>
+            <Button onClick={this.handleClose} color="primary">
+              Download
+            </Button>
+          </a>
+          {this.props.audioPlayer}
+          <Button onClick={this.handleClose} color="primary">
+            Close
+          </Button>
+
+        </DialogActions>
+      </Dialog>
+      </div>
+      )
+    }else{
+      display = (
+        <div id="container" >
         <canvas ref="canvas" id="imageView" style={{ "borderLeft": "1px solid black" }}>
         </canvas>
         <p id="pitch">pitch = {this.state.pitch}</p>
@@ -163,7 +225,14 @@ class Canvas extends Component {
        <p id="decibel">volume = {this.state.decibel}</p>
        <p id="x_last">{this.state.x_last}</p>
        <p id="y_last">{this.state.y_last}</p>
+       </div>
+      )
+    }
+    return (
+      <div>
+        {display}
       </div>
+
     );
   }
 }
