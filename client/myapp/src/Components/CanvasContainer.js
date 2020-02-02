@@ -10,7 +10,7 @@ class CanvasContainer extends Component {
 
     chooseColor(color) {
         this.setState({color: color})
-        this.state.color = color;
+        // this.state.color = color;
         console.log(this.state.color);
         // pass color to parent
     }
