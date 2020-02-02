@@ -20,8 +20,12 @@ class Table extends Component {
             "listen_for_usernames",
             (data) => {
                 let usernames = data.map((datum) => {
+                    // console.log("here1", datum);
                     return datum.username;
+                    // return 
                 });
+                // let usernames = data;
+                // console.log("here2", usernames);
                 this.setState({players: usernames});
             }
         );

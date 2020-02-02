@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 
 // import panda from '../client/myapp/src/images/panda.png';
 // import gary from '../client/myapp/src/images/gary-snail.jpeg';
@@ -53,6 +53,7 @@ io.on("connection", socket => {
       username: data,
       color: colors[counter++ % colors.length],
     });
+    // console.log("here4", userInfo);
     io.sockets.emit("listen_for_usernames", userInfo);
   })
 });

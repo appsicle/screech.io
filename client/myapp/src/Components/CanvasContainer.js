@@ -50,11 +50,6 @@ class CanvasContainer extends Component {
         this.socket.on(
             "listen_for_usernames",
             (data) => {
-                // let usernames = data.map((datum) => {
-                //     return datum.username;
-                // });
-                // this.setState({players: usernames});
-                // this.setState({color: data[data.length - 1].color})
                 if (!this.state.gotColor) {
                     this.setState({color: data[data.length - 1].color})
                     this.state.gotColor = true;
@@ -64,11 +59,11 @@ class CanvasContainer extends Component {
         // this.socket.emit("notify_new_user", this.props.username);
     }
 
-    chooseColor(color) {
-        this.setState({ color: color })
-        // this.state.color = color;
-        console.log(this.state.color);
-    }
+    // chooseColor(color) {
+    //     this.setState({ color: color })
+    //     // this.state.color = color;
+    //     console.log(this.state.color);
+    // }
 
     start = () => {
       if (this.state.isBlocked) {
