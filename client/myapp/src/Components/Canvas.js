@@ -30,14 +30,14 @@ class Canvas extends Component {
       last_x: 0,
       last_y: 0,
       angle: 45,
-      userLastPoint : {x: 0, y: 0, color: this.props.color},
+      userLastPoint : {x: 0, y: 0, color: 'black'},
       calledSCFunction: false,
       image: null,
       dialogOpen: false,
       lineWidth: 4,
       colorData: [],
-      winner: ''
-
+      winner: '',
+      color: 'black'
     };
 
     this.socket = this.props.socket;
@@ -62,6 +62,8 @@ class Canvas extends Component {
     this.state.last_y = canvas.offsetHeight/2;
     this.attachSound();
     this.attachSocketReceiver();
+    this.userColorSocket();
+
   }
 
   handleOpen = () => {
@@ -70,6 +72,8 @@ class Canvas extends Component {
 
   handleClose = () => {
     this.setState({dialogOpen: false});
+    this.props.socket.emit("kill");
+    window.location.reload();
   }
 
   drawLine(x0, y0, x1, y1, color, width) {
@@ -95,6 +99,18 @@ class Canvas extends Component {
       }
     );
   }
+
+  userColorSocket = () => {
+    this.socket.on(
+        "get_color",
+        (data) => {
+              console.log(">>>>>>", data);
+              this.setState({color: data});
+            }
+    );
+    this.socket.emit("get_color", this.props.username);
+    // console.log(">><<<", this.props.username);
+    }
 
   sendInput = (x, y, color, width) => {
     this.socket.emit("line",
@@ -147,7 +163,7 @@ class Canvas extends Component {
 
 
 
-        _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color, _this.state.lineWidth);
+        _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.state.color, _this.state.lineWidth);
         _this.setState({..._this.state, angle: _this.state.angle + pitch_change, _pitchLast: pitch, last_x: _this.state.last_x + x_change, last_y: _this.state.last_y + y_change});
 
         if(_this.state.last_x < 0){
@@ -265,7 +281,7 @@ class Canvas extends Component {
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle id="alert-dialog-slide-title">{"Game has ended!"}</DialogTitle>
-        <DialogContent style={{overflow: 'hidden'}}>
+        <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             <h1>Winner is: {this.state.winner}!
             Display percentages.

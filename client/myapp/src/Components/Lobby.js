@@ -29,6 +29,10 @@ class Lobby extends Component {
             "listen_for_usernames",
             (data) => {
                 console.log("here", data);
+                if (!this.state.gotColor) {
+                    this.setState({color: data[data.length - 1].color})
+                    this.state.gotColor = true;
+                }
                 this.setState({players: data});
             }
         );

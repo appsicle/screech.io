@@ -41,24 +41,11 @@ class CanvasContainer extends Component {
       },
     );
 
-    this.userColorSocket();
+    // this.userColorSocket();
 
     this.start();
   }
 
-  userColorSocket = () => {
-    this.socket.on(
-        "listen_for_usernames",
-        (data) => {
-            console.log(data);
-            if (!this.state.gotColor) {
-                this.setState({color: data[data.length - 1].color})
-                this.state.gotColor = true;
-            }
-        }
-    );
-    // this.socket.emit("notify_new_user", this.props.username);
-    }
 
   start = () => {
     if (this.state.isBlocked) {
@@ -111,7 +98,7 @@ class CanvasContainer extends Component {
         <div className="colors"></div>
         <Table className="table" socket={this.socket} username={this.props.username}></Table>
       </div>
-      <Canvas className="canvas" socket={this.socket} color={this.state.color} stopped={this.state.stopped} audioPlayer={<audio src={this.state.blobURL} controls="controls" />} />
+      <Canvas className="canvas"  username={this.props.username} socket={this.socket} stopped={this.state.stopped} audioPlayer={<audio src={this.state.blobURL} controls="controls" />} />
     </div>);
   }
 };
