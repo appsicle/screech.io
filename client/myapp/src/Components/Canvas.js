@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import DecibelMeter from 'decibel-meter';
 import { findPitch } from 'pitchy';  
 
+
 class Canvas extends Component {
   socket = io("localhost:4000");
 
@@ -17,6 +18,7 @@ class Canvas extends Component {
       last_y: 0,
       angle: 45,
       userLastPoint : {x: 0, y: 0, color: this.props.color},
+      lineWidth: 4,
 
     };
   }
@@ -30,7 +32,7 @@ class Canvas extends Component {
     const sidebar = document.querySelector('.colors');
     context.canvas.width = window.innerWidth - sidebar.offsetWidth;
     context.canvas.height = window.innerHeight - 10;
-    context.lineWidth = 500;
+    // context.lineWidth = 500;
 
     context.beginPath();
     context.moveTo(canvas.offsetWidth/2, canvas.offsetHeight/2);
@@ -47,7 +49,7 @@ class Canvas extends Component {
   }
 
 
-  drawLine(x0, y0, x1, y1, color) {
+  drawLine(x0, y0, x1, y1, color, width) {
     // console.log(x0,y0,x1,y1);
     const canvas = this.refs.canvas
     const context = canvas.getContext("2d");
@@ -56,7 +58,9 @@ class Canvas extends Component {
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
     context.strokeStyle = color;
-    context.lineWidth = 4;
+    // console.log("here3", width);
+    // context.lineWidth = 4;
+    context.lineWidth = width;
     context.stroke();
     context.closePath();
   }
@@ -65,15 +69,15 @@ class Canvas extends Component {
     this.socket.on(
       "line",
       (data) => {
-        this.drawLine(data.x0, data.y0, data.x1, data.y1, data.color);
+        this.drawLine(data.x0, data.y0, data.x1, data.y1, data.color, data.width);
       }
     );
   }
 
-  sendInput = (x, y, color) => {
+  sendInput = (x, y, color, width) => {
     this.socket.emit("line",
         {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
-        x1: x, y1: y, color});
+        x1: x, y1: y, color, width});
 
       this.setState({userLastPoint : {x, y}});
   }
@@ -92,6 +96,9 @@ class Canvas extends Component {
     });
     let canvas = this.refs.canvas;
     function samplePitch(_this, analyserNode, sampleRate) {
+        _this.setState({lineWidth: 4 + (_this.state.decibel * 0.5)});
+        // console.log(JSON.stringify(_this.state, null, 2));
+
         let data = new Float32Array(analyserNode.fftSize);
         
         analyserNode.getFloatTimeDomainData(data);
@@ -101,7 +108,7 @@ class Canvas extends Component {
         let y_change = Math.sin(_this.state.angle+ pitch_change) * 10;
         let x_change = Math.cos(_this.state.angle+ pitch_change) * 10;
         if (_this.state.decibel > 0){
-            console.log('afasdsa');
+            // console.log('afasdsa');
             pitch_change = (pitch-220)/500;
             if(pitch_change < -.4) {
               pitch_change = -.4;
@@ -111,14 +118,15 @@ class Canvas extends Component {
             }
             y_change = Math.sin(_this.state.angle + pitch_change) * 10;
             x_change = Math.cos(_this.state.angle + pitch_change)  * 10;
-            console.log(x_change);
+            // console.log(x_change);
         }
 
-        console.log('here1',_this.state.last_x, x_change, _this.state.last_y, y_change)
+        // console.log('here1',_this.state.last_x, x_change, _this.state.last_y, y_change)
         
 
         
-        _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color);
+        _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color, _this.state.lineWidth);
+        // _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color, 4);
         _this.setState({..._this.state, angle: _this.state.angle + pitch_change, _pitchLast: pitch, last_x: _this.state.last_x + x_change, last_y: _this.state.last_y + y_change});  
 
         if(_this.state.last_x < 0){
@@ -138,6 +146,7 @@ class Canvas extends Component {
           // _this.setState({last_y: _this.state.last_y*-1});
         }
     };
+    
 
     this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 100);
 

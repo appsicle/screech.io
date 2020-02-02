@@ -4,6 +4,14 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 4000;
 
+// import panda from '../client/myapp/src/images/panda.png';
+// import gary from '../client/myapp/src/images/gary-snail.jpeg';
+// import circle from '../client/myapp/src/images/circle.png';
+// import square from '../client/myapp/src/images/square.png';
+// import triangle from '../client/myapp/src/images/triangle.png';
+// import shrek from '../client/myapp/src/images/shrek.png';
+// import flower from '../client/myapp/src/images/flower.png';
+
 app.use(express.static(__dirname + '/../client'));
 
 // function onConnection(socket){
@@ -11,6 +19,9 @@ app.use(express.static(__dirname + '/../client'));
 // }
 
 let usernames = [];
+
+// let images = [panda, gary, circle, square, triangle, shrek, flower];
+// let image = images[Math.floor(Math.random()*images.length)];
 
 http.listen(port, () => console.log('listening on port ' + port));
 
