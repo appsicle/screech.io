@@ -24,7 +24,16 @@ code {
 }
 
 .colors {
+  width: 275px;
   display: flex;
+  flex-wrap: wrap;
+  /* flex-direction: row; */
+  /* flex-grow: 50; */
+}
+.colors>* {
+  flex: 1 1 70px;
+  margin: 20px;
+  flex-grow: 50;
 }
 
 .sidebar-container{
@@ -68,3 +77,10 @@ code {
 .color.green { background-color: green; }
 .color.blue { background-color: blue; }
 .color.yellow { background-color: darkorange; }
+.color.purple { background-color: purple; }
+.color.brown { background-color: brown; }
+.color.gold { background-color: gold; }
+.color.teal { background-color: teal; }
+.color.pink { background-color: pink; }
+.color.fuchia { background-color: fuchsia; }
+.color.dimgray { background-color: dimgray; }
