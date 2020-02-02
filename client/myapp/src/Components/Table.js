@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 
 class Table extends Component {
-    socket = io("http://3b2e338d.ngrok.io");
+    socket = io("http://3b2e338d.ngrok.io/");
     constructor(props) {
         super(props);
         this.state = {
@@ -22,7 +22,7 @@ class Table extends Component {
                 let usernames = data.map((datum) => {
                     // console.log("here1", datum);
                     return datum.username;
-                    // return 
+                    // return
                 });
                 // let usernames = data;
                 // console.log("here2", usernames);

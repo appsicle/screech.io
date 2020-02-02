@@ -15,7 +15,7 @@ import io from 'socket.io-client';
 
 // let images = [panda, gary, circle, square, triangle, shrek, flower];
 // let image = images[Math.floor(Math.random() * images.length)];
-const playTime = 30000;
+const playTime = 3000;
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
 
@@ -25,7 +25,7 @@ class CanvasContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      color: 'black',
+      color: 'red',
       isRecording: false,
       blobURL: '',
       isBlocked: false,

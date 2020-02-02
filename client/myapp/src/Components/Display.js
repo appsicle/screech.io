@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import CanvasContainer from './CanvasContainer'
 
 class Display extends Component {
-  socket = io("http://3b2e338d.ngrok.io");
+  socket = io("http://3b2e338d.ngrok.io/");
   constructor(props) {
     super(props);
     this.state = {
