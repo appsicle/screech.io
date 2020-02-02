@@ -24,7 +24,7 @@ class Display extends Component {
 
   submitClicked() {
     this.setState({page: 1});
-    this.nameSocketSend();
+    // this.nameSocketSend();
   }
 
   nextPage(){
@@ -37,12 +37,12 @@ class Display extends Component {
     });
   }
 
-  nameSocketSend() {
-    this.socket.emit(
-      "username",
-      {input: this.state.input}
-    );
-  };
+  // nameSocketSend() {
+  //   this.socket.emit(
+  //     "username",
+  //     {input: this.state.input}
+  //   );
+  // };
 
   render(){
     let dis;

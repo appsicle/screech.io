@@ -12,6 +12,7 @@ import Slide from '@material-ui/core/Slide';
 import {serverAddress} from '../properties'
 
 
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -34,10 +35,13 @@ class Canvas extends Component {
       image: null,
       dialogOpen: false,
       lineWidth: 4,
+      colorData: [],
+      winner: ''
 
     };
 
     this.socket = this.props.socket;
+    this.calculateColors = this.calculateColors.bind(this);
   }
 
   componentDidMount() {
@@ -115,7 +119,7 @@ class Canvas extends Component {
     let canvas = this.refs.canvas;
     function samplePitch(_this, analyserNode, sampleRate) {
         let data = new Float32Array(analyserNode.fftSize);
-        _this.state.lineWidth = 4 + (_this.state.decibel * 0.5);
+        _this.state.lineWidth = 4 + (_this.state.decibel * 0.3);
 
         // console.log(_this.state.lineWidth);
 
@@ -168,22 +172,83 @@ class Canvas extends Component {
 
   }
 
+  _getColorIndicesForCoord = (x, y, width) => {
+    var red = y * (width * 4) + x * 4;
+    return [red, red + 1, red + 2, red + 3];
+  }
+
+  calculateColors(imageData, canvasWidth, canvasHeight){
+    let colorSum = {}
+    for(let i = 0; i < canvasWidth; i++){
+      for(let j = 0; j < canvasHeight; j++){
+        var colorIndices = this._getColorIndicesForCoord(i, j, canvasWidth);
+
+        var redIndex = colorIndices[0];
+        var greenIndex = colorIndices[1];
+        var blueIndex = colorIndices[2];
+        var alphaIndex = colorIndices[3];
+
+        var redForCoord = imageData.data[redIndex];
+        var greenForCoord = imageData.data[greenIndex];
+        var blueForCoord = imageData.data[blueIndex];
+        var alphaForCoord = imageData.data[alphaIndex];
+        var sum = redForCoord+":" + greenForCoord +":"+ blueForCoord;
+        if(sum in colorSum){
+          colorSum[sum]++;
+        }else{
+          colorSum[sum] = 1;
+        }
+      }
+    }
+
+    var colorList = Object.entries(colorSum);
+    colorList.sort((a, b) => b[1]-a[1]);
+    this.calcuateWinners(colorList);
+  }
+
+  calcuateWinners = (colorList) => {
+    const colors = { "255:0:0": "red", "0:255:0": "green", "0:0:255":"blue"}
+    let winnerList = [];
+    let i = 0;
+    console.log(colorList);
+    while(winnerList.length < 2  && i < colorList.length){
+      if(colorList[i][0] == "0:0:0"){
+        i++;
+        continue;
+      }
+      if(colorList[i][0] in colors){
+        console.log(colorList[i][0]);
+        winnerList.push(colors[colorList[i][0]]);
+      }
+      i++;
+    }
+    if(winnerList.length == 0){
+      winnerList.push("black");
+    }
+    console.log("winner is: " + winnerList[0]);
+    this.setState({winner: winnerList[0]});
+
+  }
+
   kys = () => {
     if(!this.state.calledSCFunction){
       const canvas = this.refs.canvas;
-      var img    = canvas.toDataURL("image/png");
+      const context = canvas.getContext("2d");
+
+      var img = canvas.toDataURL("image/png");
       this.socket.removeAllListeners("line");
       this.setState({image: img});
       this.setState({calledSCFunction: true});
       this.setState({dialogOpen: true});
+
+      this.calculateColors(context.getImageData(0,0, canvas.offsetWidth, canvas.offsetHeight), canvas.offsetWidth, canvas.offsetHeight);
+
     }
   }
 
   render() {
     if(this.props.stopped){
-      // console.log("here");
       this.kys();
-
     }
     let display;
     if(this.state.calledSCFunction){
@@ -202,9 +267,9 @@ class Canvas extends Component {
         <DialogTitle id="alert-dialog-slide-title">{"Game has ended!"}</DialogTitle>
         <DialogContent style={{overflow: 'hidden'}}>
           <DialogContentText id="alert-dialog-slide-description">
-            blah blah this color won.
+            <h1>Winner is: {this.state.winner}!
             Display percentages.
-            Take a look at your recording and screenshot!
+            Take a look at your recording and screenshot!</h1>
             <img src={this.state.image}/>
           </DialogContentText>
         </DialogContent>

@@ -1,26 +1,17 @@
 import React, { Component } from 'react';
+// import { Redirect } from 'react-router-dom';
 import Canvas from './Canvas';
 import Table from './Table';
 import MicRecorder from 'mic-recorder-to-mp3';
-import Button from '@material-ui/core/Button';
-// import panda from '../images/panda.png';
-// import gary from '../images/gary-snail.jpeg';
-// import circle from '../images/circle.png';
-// import square from '../images/square.png';
-// import triangle from '../images/triangle.png';
-// import shrek from '../images/shrek.png';
-// import flower from '../images/flower.png';
+// import Button from '@material-ui/core/Button';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 import {serverAddress} from '../properties';
 
 
-// let images = [panda, gary, circle, square, triangle, shrek, flower];
-// let image = images[Math.floor(Math.random() * images.length)];
 const playTime = 30000;
 
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
-
 
 
 class CanvasContainer extends Component {
@@ -28,7 +19,7 @@ class CanvasContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      color: 'black',
+      color: 'red',
       isRecording: false,
       blobURL: '',
       isBlocked: false,
@@ -69,12 +60,6 @@ class CanvasContainer extends Component {
     // this.socket.emit("notify_new_user", this.props.username);
     }
 
-  // chooseColor(color) {
-  //   this.setState({ color: color })
-  //   // this.state.color = color;
-  //   console.log(this.state.color);
-  // }
-
   start = () => {
     if (this.state.isBlocked) {
       console.log('Permission Denied');
@@ -98,6 +83,13 @@ class CanvasContainer extends Component {
       }).catch((e) => console.log(e));
     this.setState({ stopped: true });
   };
+
+
+  // renderRedirect = () => {
+  //   if (this.state.redirect) {
+  //     return <Redirect to="/"></Redirect>
+  //   }
+  // }
 
   render() {
     return (<div className="game-container">

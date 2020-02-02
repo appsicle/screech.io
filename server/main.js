@@ -6,7 +6,7 @@ const port = process.env.PORT || 4000;
 
 app.use(express.static(__dirname + '/../client'));
 let userInfo = [];
-const colors = ['red', 'blue', 'gold', 'teal', 'brown', 'dark-orange', 'pink'];
+const colors = ['red', 'blue', 'gold', 'lime', 'teal', 'brown', 'dark-orange', 'pink'];
 let counter = 0
 
 http.listen(port, () => console.log('listening on port ' + port));
@@ -16,6 +16,7 @@ io.on("connection", socket => {
   let first_time = true;
   socket.on("disconnect", function() {
     console.log("A user disconnected");
+    // io.sockets.emit("remove_user", );
   });
 
   socket.on("line", data => {
