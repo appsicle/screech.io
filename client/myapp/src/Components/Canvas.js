@@ -34,7 +34,7 @@ class Canvas extends Component {
       calledSCFunction: false,
       image: null,
       dialogOpen: false,
-      lineWidth: 4,
+      lineWidth: 30,
       colorData: [],
       winner: '',
       color: 'black'
@@ -135,7 +135,7 @@ class Canvas extends Component {
     let canvas = this.refs.canvas;
     function samplePitch(_this, analyserNode, sampleRate) {
         let data = new Float32Array(analyserNode.fftSize);
-        _this.state.lineWidth = 4 + (_this.state.decibel * 0.3);
+        _this.state.lineWidth = 30 + (_this.state.decibel * 0.3);
 
         // console.log(_this.state.lineWidth);
 
@@ -292,14 +292,14 @@ class Canvas extends Component {
         <DialogActions>
           <a href={this.state.image} download>
             <Button onClick={this.handleClose} color="primary">
-              Download
+              Download Audio
             </Button>
           </a>
+          <span><bold>Click there to play your audio --></bold></span>
           {this.props.audioPlayer}
           <Button onClick={this.handleClose} color="primary">
             Close
           </Button>
-
         </DialogActions>
       </Dialog>
       </div>

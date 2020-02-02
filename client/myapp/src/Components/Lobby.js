@@ -3,6 +3,8 @@ import io from 'socket.io-client';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
+import { findPitch } from 'pitchy';
+
 
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
@@ -18,10 +20,13 @@ class Lobby extends Component {
     constructor(props){
         super(props);
         this.state = {
-            players: []
+            players: [],
+            pitch: 0
         };
         this.socket = this.props.socket;
         this.attachSockets();
+        this.attachSound();
+
     }
 
     attachSockets = () => {
@@ -47,8 +52,38 @@ class Lobby extends Component {
         this.socket.emit("notify_new_user", this.props.username);
     }
 
+    attachSound = () => {
+        // attach pitch
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let analyserNode = audioContext.createAnalyser();
+        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+            let sourceNode = audioContext.createMediaStreamSource(stream);
+            sourceNode.connect(analyserNode);
+        });
+
+        function samplePitch(_this, analyserNode, sampleRate) {
+            let data = new Float32Array(analyserNode.fftSize);
+            _this.state.lineWidth = 30 + (_this.state.decibel * 0.3);
+        
+            analyserNode.getFloatTimeDomainData(data);
+            let [pitch, clarity] = findPitch(data, sampleRate);
+            if (clarity > .80){
+                _this.setState({pitch: pitch}); 
+                console.log(_this.state.pitch);
+
+            }
+            
+        };
+    
+        this.interval3 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 100);
+    }
+
     signalStart(){
         this.socket.emit("game_start");
+    }
+
+    getPitch = () => {
+        return this.state.pitch;
     }
 
     renderTableData() {
@@ -72,7 +107,7 @@ class Lobby extends Component {
           >
               
             <Grid item xs = {12} style={{marginBottom: "0px"}}>
-              <h1>SCREECH IO</h1>
+              <h1>SCREECH.IO</h1>
             </Grid>
             <Card elevation={3}>
             <Grid item xs = {12} style={{marginBottom: "0px"}}>
@@ -86,12 +121,25 @@ class Lobby extends Component {
             alignItems="center"            
             style={{marginBottom: "0px"}}>
                     {this.renderTableData()}  
-
             </Grid>
             <Grid item xs = {12}>
               <Button onClick={this.signalStart.bind(this)}>Start</Button>
             </Grid>
             </Card>
+            <Grid container xs
+                direction="column"
+                // typography={fontFamily: [Roboto]}
+                justify="space-between"
+                alignItems="center"            
+                style={{marginBottom: "0px"}}>
+                    <p style={{fontWeight: 600}}>Hey Buddy! Welcome to the Lobby. While you are waiting here, let me teach you how to play! </p>
+                    <p>This is a game that you can play with your voice!</p>
+                    <p>Try to move the text below with your voice!</p>
+                    <p style={{marginRight:this.getPitch()}}>Talk in a high tone to go left!</p>
+                    <p style={{marginLeft:this.getPitch()}}>Talk in a low tone to go right!</p>
+                    <p>Try to get more of your color on the screen that your opponent(s) to win!</p>
+
+            </Grid>
           </Grid>);
     }
 }

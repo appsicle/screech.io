@@ -54,7 +54,7 @@ class Display extends Component {
         alignItems="center"
       >
         <Grid item xs = {12} style={{marginBottom: "50px"}}>
-          <h1>SCREECH IO</h1>
+          <h1>SCREECH.IO</h1>
         </Grid>
         <Grid
         container
