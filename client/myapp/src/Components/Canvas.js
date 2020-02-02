@@ -20,7 +20,7 @@ class Canvas extends Component {
           this.state.x = e.nativeEvent.offsetX;
           this.state.y = e.nativeEvent.offsetY;
         }
-        this.drawLine(this.state.x, this.state.y, e.nativeEvent.offsetX, e.nativeEvent.offsetY, 'black', true);
+        this.drawLine(this.state.x, this.state.y, e.nativeEvent.offsetX, e.nativeEvent.offsetY, this.props.color, true);
         this.setState({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
         // this.setState({x: e.clientX||e.touches[0].clientX});
         // this.setState({y: e.clientY||e.touches[0].clientY});
