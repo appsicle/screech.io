@@ -15,7 +15,7 @@ import io from 'socket.io-client';
 
 // let images = [panda, gary, circle, square, triangle, shrek, flower];
 // let image = images[Math.floor(Math.random() * images.length)];
-const playTime = 3000;
+const playTime = 30000;
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
 
