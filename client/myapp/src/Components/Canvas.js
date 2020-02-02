@@ -2,6 +2,47 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 
 class Canvas extends Component {
+  socket = io("localhost:3000");
+
+  state = {
+    // [{x0, y0, x1, y1, color}, ...]
+    lines: [],
+    // {u1: {x, y, color}}
+    userLastPoint = {},
+  };
+
+  attachSocketReceiver = () => {
+    this.socket.on(
+      "message",
+      (data) => {
+        let temp = this.state.userLastPoint;
+        temp[user] = {x, y, color};
+
+        this.setState({
+          lines: [...this.state.lines, {
+            x0: this.state.userLastPoint[user].x,
+            y0: this.state.userLastPoint[user].y,
+            x1: x,
+            y1: y,
+            color: color,
+          },],
+          userLastPoint: temp,
+        })
+      }
+    );
+  }
+
+  sendToSocket = (x, y, user, color) => {
+    this.socket.emit(
+      {x, y, user, color}
+    );
+  }
+
+  // componentDidMount() {
+  //   // this.socket.on()
+
+  // }
+
   render() {
     return (
       <div id="container">
