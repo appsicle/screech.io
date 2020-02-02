@@ -25,10 +25,10 @@ class Display extends Component {
         justify="row"
         alignItems="center"
       >
-        <Grid item xs = {12}>
+        <Grid item xs = {12} style={{marginBottom: "100px"}}>
           <h1>SCREECH IO</h1>
         </Grid>
-        <Grid item xs = {12}>
+        <Grid item xs = {12} style={{marginBottom: "20px"}}>
           <h2 style={{display: "inline"}}>Login:</h2><TextField style={{display: "inline"}}/>
         </Grid>
         <Grid item xs = {12}>
