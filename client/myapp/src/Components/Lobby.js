@@ -135,10 +135,9 @@ class Lobby extends Component {
                     <p style={{fontWeight: 600}}>Hey Buddy! Welcome to the Lobby. While you are waiting here, let me teach you how to play! </p>
                     <p>This is a game that you can play with your voice!</p>
                     <p>Try to move the text below with your voice!</p>
-                    <p style={{marginRight:this.getPitch()}}>Talk in a high tone to go left!</p>
-                    <p style={{marginLeft:this.getPitch()}}>Talk in a low tone to go right!</p>
+                    <p>Talk in a high tone to go left!</p>
+                    <p>Talk in a low tone to go right!</p>
                     <p>Try to get more of your color on the screen that your opponent(s) to win!</p>
-
             </Grid>
           </Grid>);
     }
