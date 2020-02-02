@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Canvas from './Canvas'
+import Canvas from './Canvas';
+import Table from './Table';
 
 import panda from '../images/panda.png';
 import gary from '../images/gary-snail.jpeg';
@@ -39,15 +40,19 @@ class CanvasContainer extends Component {
                         <div className="color brown" onClick={() => this.chooseColor('brown')}></div>
                         <div className="color purple" onClick={() => this.chooseColor('purple')}></div>
                         <div className="color gold" onClick={() => this.chooseColor('gold')}></div>
-                        <div className="color teal" onClick={() => this.chooseColor('teal')}></div>
-                        <div className="color pink" onClick={() => this.chooseColor('pink')}></div>
+                        <div className="color teal" onClick={() => this.chooseColor('teal')}></div> 
+                        {/* <div className="color pink" onClick={() => this.chooseColor('pink')}></div>
                         <div className="color fuchia" onClick={() => this.chooseColor('fuchia')}></div>
-                        <div className="color dimgray" onClick={() => this.chooseColor('dimgray')}></div>
+                        <div className="color dimgray" onClick={() => this.chooseColor('dimgray')}></div> */}
                     </div>
                     <p>Try to draw this!</p>
                     <img src={image}></img>
+                    <Table className="table" username={this.props.username}></Table>
+                    {/* <div className="player-header">Current Players</div>
+                    <div className="players">
+                    </div> */}
                 </div>
-                <Canvas className="canvas" color={this.state.color} />
+                <Canvas className="canvas" color={this.state.color}/>
             </div>
 
         );
