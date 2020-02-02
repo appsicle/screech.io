@@ -120,9 +120,9 @@ class CanvasContainer extends Component {
                     <Button onClick={this.stop} disabled={!this.state.isRecording}>
                       Done
                     </Button>
-                    <audio src={this.state.blobURL} controls="controls" />
+
                 </div>
-                <Canvas className="canvas" color={this.state.color}/>
+                <Canvas className="canvas" color={this.state.color} stopped={this.state.stopped} audioPlayer={<audio src={this.state.blobURL} controls="controls" />}/>
             </div>
 
         );
