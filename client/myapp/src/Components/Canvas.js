@@ -10,7 +10,7 @@ class Canvas extends Component {
     super(props);
 
     this.state = {
-      // page: 0, 
+      // page: 0,
       // canvas: null,
       userLastPoint : {x: 0, y: 0, color: this.props.color},
     };
@@ -26,10 +26,10 @@ class Canvas extends Component {
   }
 
   _onMouseMove(e) {
-      // if(this.state.x === 0 && this.state.y === 0){
-      //   this.state.x = e.nativeEvent.offsetX;
-      //   this.state.y = e.nativeEvent.offsetY;
-      // }
+      if(this.state.x === 0 && this.state.y === 0){
+        this.state.userLastPoint.x = e.nativeEvent.offsetX;
+        this.state.userLastPoint.y = e.nativeEvent.offsetY;
+      }
       // this.drawLine(this.state.x, this.state.y, e.nativeEvent.offsetX, e.nativeEvent.offsetY, this.props.color, true);
       // this.setState({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
       // this.setState({x: e.clientX||e.touches[0].clientX});
@@ -41,7 +41,7 @@ class Canvas extends Component {
       // console.log("stuff");
       this.socket.emit("line",
         {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
-        x1: e.nativeEvent.offsetX, y1: e.nativeEvent.offsetY, 
+        x1: e.nativeEvent.offsetX, y1: e.nativeEvent.offsetY,
         color: this.props.color});
 
       this.setState({userLastPoint : {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY}});
@@ -87,18 +87,18 @@ class Canvas extends Component {
     let analyserNode = audioContext.createAnalyser();
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
         let sourceNode = audioContext.createMediaStreamSource(stream);
-        sourceNode.connect(analyserNode); 
+        sourceNode.connect(analyserNode);
     });
 
     function samplePitch(_this, analyserNode, sampleRate) {
         let data = new Float32Array(analyserNode.fftSize);
         analyserNode.getFloatTimeDomainData(data);
         let [pitch, clarity] = findPitch(data, sampleRate);
-      
+
         if (clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 10){
             _this.setState({..._this.state, clarity: clarity, pitch: pitch});
         }
-        _this.setState({..._this.state, _pitchLast: pitch});  
+        _this.setState({..._this.state, _pitchLast: pitch});
     };
     this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 80);
   }
