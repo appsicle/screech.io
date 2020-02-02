@@ -22,7 +22,7 @@ class Table extends Component {
                 let usernames = data.map((datum) => {
                     // console.log("here1", datum);
                     return datum.username;
-                    // return 
+                    // return
                 });
                 // let usernames = data;
                 // console.log("here2", usernames);

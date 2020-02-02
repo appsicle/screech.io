@@ -16,7 +16,7 @@ class CanvasContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      color: 'black',
+      color: 'red',
       isRecording: false,
       blobURL: '',
       isBlocked: false,
