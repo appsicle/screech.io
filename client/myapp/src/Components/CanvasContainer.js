@@ -50,6 +50,11 @@ class CanvasContainer extends Component {
         this.socket.on(
             "listen_for_usernames",
             (data) => {
+                // let usernames = data.map((datum) => {
+                //     return datum.username;
+                // });
+                // this.setState({players: usernames});
+                // this.setState({color: data[data.length - 1].color})
                 if (!this.state.gotColor) {
                     this.setState({color: data[data.length - 1].color})
                     this.state.gotColor = true;
