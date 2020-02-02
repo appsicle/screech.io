@@ -46,7 +46,7 @@ class Canvas extends Component {
   render() {
     return (
       <div id="container" >
-        <canvas ref="canvas" id="imageView" onMouseMove={this._onMouseMove.bind(this)} style={{ "border": "1px solid black" }}>
+        <canvas ref="canvas" id="imageView" onMouseMove={this._onMouseMove.bind(this)} style={{ "borderLeft": "1px solid black" }}>
 
         </canvas>
       </div>

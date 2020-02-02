@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -35,7 +36,12 @@ code {
 
 }
 
+.color-header{
+  margin: 4px 0;
+}
+
 .color {
+  border: 1px solid gainsboro;
   display: inline-block;
   height: 48px;
   width: 48px;
@@ -43,8 +49,12 @@ code {
   margin: 4px;
 }
 
+.color:hover{
+  opacity: .8;
+}
+
 .color.black { background-color: black; }
 .color.red { background-color: red; }
 .color.green { background-color: green; }
 .color.blue { background-color: blue; }
-.color.yellow { background-color: yellow; }
+.color.yellow { background-color: darkorange; }
