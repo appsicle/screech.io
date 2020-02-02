@@ -1,64 +1,51 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
-// import DecibelMeter from 'decibel-meter';
-import { findPitch } from 'pitchy';
-
+import DecibelMeter from 'decibel-meter';
+import { findPitch } from 'pitchy';  
 
 class Canvas extends Component {
   socket = io("localhost:4000");
 
   constructor(props) {
-    // color = props.color;
-    // console.log('prop color is '+ props.color);
     super(props);
 
     this.state = {
       pitch: 0,
       _pitchLast: 0,
       decibel: 0 ,
-      last_x: 150.0,
-      last_y: 150.0,
-      // page: 0,
-      // canvas: null,
+      last_x: 0,
+      last_y: 0,
+      angle: 45,
       userLastPoint : {x: 0, y: 0, color: this.props.color},
 
     };
   }
 
   componentDidMount() {
-    this.attachSound();
-    this.attachSocketReceiver();
+    
+    
     const canvas = this.refs.canvas;
+    
     const context = canvas.getContext("2d");
     const sidebar = document.querySelector('.colors');
     context.canvas.width = window.innerWidth - sidebar.offsetWidth;
     context.canvas.height = window.innerHeight - 10;
-    
+    context.lineWidth = 500;
+
+    context.beginPath();
+    context.moveTo(canvas.offsetWidth/2, canvas.offsetHeight/2);
+    context.lineTo(canvas.offsetWidth/2, canvas.offsetHeight/2);
+    context.closePath();
+
+
+    this.state.last_x = canvas.offsetWidth/2;
+    this.state.last_y = canvas.offsetHeight/2;
+    this.attachSound();
+    this.attachSocketReceiver();
+
+
   }
 
-  // _onMouseMove(e) {
-  //     if(this.state.userLastPoint.x === 0 && this.state.userLastPoint.y === 0){
-  //       this.state.userLastPoint.x = e.nativeEvent.offsetX;
-  //       this.state.userLastPoint.y = e.nativeEvent.offsetY;
-  //     }
-  //     // this.drawLine(this.state.x, this.state.y, e.nativeEvent.offsetX, e.nativeEvent.offsetY, this.props.color, true);
-  //     // this.setState({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
-  //     // this.setState({x: e.clientX||e.touches[0].clientX});
-  //     // this.setState({y: e.clientY||e.touches[0].clientY});
-  //     // current.x = ;
-  //     // current.y = ;
-  //     // console.log(this.state)
-
-  //     // console.log("stuff");
-  //     // this.socket.emit("line",
-  //     //   {x0: this.state.userLastPoint.x, y0: this.state.userLastPoint.y,
-  //     //   x1: e.nativeEvent.offsetX, y1: e.nativeEvent.offsetY,
-  //     //   color: this.props.color});
-
-  //     // this.setState({userLastPoint : {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY}});
-
-  //     this.sendInput(e.nativeEvent.offsetX, e.nativeEvent.offsetY, this.props.color);
-  // }
 
   drawLine(x0, y0, x1, y1, color) {
     // console.log(x0,y0,x1,y1);
@@ -73,13 +60,6 @@ class Canvas extends Component {
     context.stroke();
     context.closePath();
   }
-
-  // updateCanvas() {
-  //   const ctx = this.refs.canvas.getContext('2d');
-  //   // ctx.fillRect(0,0, 100, 100);
-  //   // ctx.addEventListener
-  //   // ctx.addEventListener('mousemove', this.onMouseMove, false);
-  // }
 
   attachSocketReceiver = () => {
     this.socket.on(
@@ -100,8 +80,8 @@ class Canvas extends Component {
 
   attachSound = () => {
     // attach decibel
-    // const meter = new DecibelMeter('unique-id');
-    // meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)*15}));
+    const meter = new DecibelMeter('unique-id');
+    meter.listenTo(0, (dB, percent, value) => this.setState({...this.state, decibel: Math.floor(dB+100)}));
 
     // attach pitch
     let audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -110,49 +90,68 @@ class Canvas extends Component {
         let sourceNode = audioContext.createMediaStreamSource(stream);
         sourceNode.connect(analyserNode);
     });
-
+    let canvas = this.refs.canvas;
     function samplePitch(_this, analyserNode, sampleRate) {
         let data = new Float32Array(analyserNode.fftSize);
+        
         analyserNode.getFloatTimeDomainData(data);
         let [pitch, clarity] = findPitch(data, sampleRate);
+        let pitch_change = 0;
 
-        let y_change = 0.0;
-        let x_change = 0.0;
-        console.log('samping');
-        console.log(clarity > 0.80 && pitch > 50 && pitch < 1000 && Math.abs(pitch - _this.state._pitchLast) < 30);
-        if (true){
-            // _this.setState({..._this.state, clarity: clarity, pitch: pitch});
+        let y_change = Math.sin(_this.state.angle+ pitch_change) * 10;
+        let x_change = Math.cos(_this.state.angle+ pitch_change) * 10;
+        if (_this.state.decibel > 0){
             console.log('afasdsa');
-            // console.log(Math.sin((pitch-200)/2.2222))
-            y_change = Math.sin((pitch-200)/2.2222) * 25;
-            x_change = Math.cos((pitch-200)/2.2222) * 25;
-            console.log(x_change)
+            pitch_change = (pitch-220)/500;
+            if(pitch_change < -.4) {
+              pitch_change = -.4;
+            }
+            if(pitch_change > .4){
+              pitch_change = .4;
+            }
+            y_change = Math.sin(_this.state.angle + pitch_change) * 10;
+            x_change = Math.cos(_this.state.angle + pitch_change)  * 10;
+            console.log(x_change);
         }
-        if(!x_change){
-          return;
-        }
-        // _this.sendInput(_this.state.pitch, _this.state.decibel, _this.props.color);
+
         console.log('here1',_this.state.last_x, x_change, _this.state.last_y, y_change)
+        
 
+        
         _this.sendInput(_this.state.last_x + x_change, _this.state.last_y + y_change, _this.props.color);
+        _this.setState({..._this.state, angle: _this.state.angle + pitch_change, _pitchLast: pitch, last_x: _this.state.last_x + x_change, last_y: _this.state.last_y + y_change});  
 
-        _this.setState({..._this.state, _pitchLast: pitch, last_x: _this.state.last_x + x_change, last_y: _this.state.last_y + y_change});
-
-        // _this.setState({..._this.state, _pitchLast: pitch});
+        if(_this.state.last_x < 0){
+          _this.setState({angle: _this.state.angle + 180})
+          // _this.setState({last_x: _this.state.last_x*-1});
+        }
+        if(_this.state.last_y < 0){
+          _this.setState({angle: _this.state.angle + 180})
+          // _this.setState({last_y: _this.state.last_y*-1});
+        }
+        if(_this.state.last_x > canvas.offsetWidth){
+          _this.setState({angle:  _this.state.angle + 180})
+          // _this.setState({last_x: _this.state.last_x*-1});
+        }
+        if(_this.state.last_y > canvas.offsetHeight){
+          _this.setState({angle:  _this.state.angle + 180})
+          // _this.setState({last_y: _this.state.last_y*-1});
+        }
     };
 
     this.interval2 = setInterval(() => samplePitch(this, analyserNode, audioContext.sampleRate), 100);
 
-    // this.interval3 = setInterval(() => this.sendInput(this.state.pitch, this.state.decibel, this.props.color), 100);
   }
 
   render() {
     return (
       <div id="container" >
+        
         <canvas ref="canvas" id="imageView" style={{ "borderLeft": "1px solid black" }}>
         </canvas>
-        <p id="pitch">{this.state.pitch}</p>
-       <p id="decibel">{this.state.decibel}</p>
+        <p id="pitch">pitch = {this.state.pitch}</p>
+        <p id="pitch">angle = {this.state.angle}</p>
+       <p id="decibel">volume = {this.state.decibel}</p>
        <p id="x_last">{this.state.x_last}</p>
        <p id="y_last">{this.state.y_last}</p>
       </div>

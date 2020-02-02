@@ -15,13 +15,18 @@ let usernames = [];
 http.listen(port, () => console.log('listening on port ' + port));
 
 io.on("connection", socket => {
+  let first_time = true;
   socket.on("disconnect", function() {
     console.log("A user disconnected");
   });
 
   socket.on("line", data => {
-    // console.log(data);
-    io.sockets.emit("line", data);
+    console.log(data);
+    if(first_time){
+      first_time = false;
+    }else{
+      io.sockets.emit("line", data);
+    }
   });
 
   socket.on("notify_new_user", data => {
