@@ -203,7 +203,7 @@ class Canvas extends Component {
   }
 
   calcuateWinners = (colorList) => {
-    const colors = {"0:0:0":"black", "255:0:0": "red", "0:128:0": "green", "0:0:255":"blue"}
+    const colors = { "255:0:0": "red", "0:255:0": "green", "0:0:255":"blue"}
     let winnerList = [];
     let i = 0;
     console.log(colorList);
