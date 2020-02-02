@@ -1,27 +1,18 @@
 import React, { Component } from 'react';
+// import { Redirect } from 'react-router-dom';
 import Canvas from './Canvas';
 import Table from './Table';
 import MicRecorder from 'mic-recorder-to-mp3';
-import Button from '@material-ui/core/Button';
-// import panda from '../images/panda.png';
-// import gary from '../images/gary-snail.jpeg';
-// import circle from '../images/circle.png';
-// import square from '../images/square.png';
-// import triangle from '../images/triangle.png';
-// import shrek from '../images/shrek.png';
-// import flower from '../images/flower.png';
+// import Button from '@material-ui/core/Button';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 
-// let images = [panda, gary, circle, square, triangle, shrek, flower];
-// let image = images[Math.floor(Math.random() * images.length)];
 const playTime = 30000;
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
 
-
 class CanvasContainer extends Component {
-  socket = io("http://3b2e338d.ngrok.io");
+  socket = io("localhost:4000");
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +20,8 @@ class CanvasContainer extends Component {
       isRecording: false,
       blobURL: '',
       isBlocked: false,
-      stopped: false
+      stopped: false,
+      gotColor: false,
     };
   }
 
@@ -63,12 +55,6 @@ class CanvasContainer extends Component {
     // this.socket.emit("notify_new_user", this.props.username);
 }
 
-  // chooseColor(color) {
-  //   this.setState({ color: color })
-  //   // this.state.color = color;
-  //   console.log(this.state.color);
-  // }
-
   start = () => {
     if (this.state.isBlocked) {
       console.log('Permission Denied');
@@ -93,6 +79,13 @@ class CanvasContainer extends Component {
     this.setState({ stopped: true });
   };
 
+
+  // renderRedirect = () => {
+  //   if (this.state.redirect) {
+  //     return <Redirect to="/"></Redirect>
+  //   }
+  // }
+
   render() {
     return (<div className="game-container">
       <div>
@@ -110,21 +103,7 @@ class CanvasContainer extends Component {
             <Timer.Seconds /> seconds left
           </div>
         </Timer>
-        {/* <div className="color-header">Pick a color</div> */}
-        <div className="colors">
-          {/* <div className="color black" onClick={() => this.chooseColor('black')}></div>
-          <div className="color red" onClick={() => this.chooseColor('red')}></div>
-          <div className="color green" onClick={() => this.chooseColor('green')}></div>
-          <div className="color blue" onClick={() => this.chooseColor('blue')}></div>
-          <div className="color yellow" onClick={() => this.chooseColor('darkorange')}></div>
-          <div className="color brown" onClick={() => this.chooseColor('brown')}></div>
-          <div className="color purple" onClick={() => this.chooseColor('purple')}></div>
-          <div className="color gold" onClick={() => this.chooseColor('gold')}></div>
-          <div className="color teal" onClick={() => this.chooseColor('teal')}></div> */}
-        </div>
-        {/* <p>Try to draw this!</p> */}
-
-        {/* <img src={image}></img> */}
+        <div className="colors"></div>
         <Table className="table" username={this.props.username}></Table>
       </div>
       <Canvas className="canvas" color={this.state.color} stopped={this.state.stopped} audioPlayer={<audio src={this.state.blobURL} controls="controls" />} />

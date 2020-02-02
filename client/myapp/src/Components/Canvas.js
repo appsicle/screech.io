@@ -15,7 +15,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 class Canvas extends Component {
-  socket = io("http://3b2e338d.ngrok.io");
+  socket = io("localhost:4000");
 
   constructor(props) {
     super(props);
@@ -111,7 +111,7 @@ class Canvas extends Component {
     let canvas = this.refs.canvas;
     function samplePitch(_this, analyserNode, sampleRate) {
         let data = new Float32Array(analyserNode.fftSize);
-        _this.state.lineWidth = 4 + (_this.state.decibel * 0.5);
+        _this.state.lineWidth = 4 + (_this.state.decibel * 0.3);
 
         // console.log(_this.state.lineWidth);
 

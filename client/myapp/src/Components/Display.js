@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import CanvasContainer from './CanvasContainer'
 
 class Display extends Component {
-  socket = io("http://3b2e338d.ngrok.io");
+  socket = io("localhost:400");
   constructor(props) {
     super(props);
     this.state = {
@@ -18,7 +18,7 @@ class Display extends Component {
 
   submitClicked() {
     this.setState({page: 1});
-    this.nameSocketSend();
+    // this.nameSocketSend();
   }
 
   getName = (e) => {
@@ -27,12 +27,12 @@ class Display extends Component {
     });
   }
 
-  nameSocketSend() {
-    this.socket.emit(
-      "username",
-      {input: this.state.input}
-    );
-  };
+  // nameSocketSend() {
+  //   this.socket.emit(
+  //     "username",
+  //     {input: this.state.input}
+  //   );
+  // };
 
   render(){
     let dis;
