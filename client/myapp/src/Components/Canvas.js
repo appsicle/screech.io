@@ -5,7 +5,7 @@ import { findPitch } from 'pitchy';
 
 
 class Canvas extends Component {
-  socket = io("localhost:4000");
+  socket = io("http://3b2e338d.ngrok.io");
 
   constructor(props) {
     super(props);
