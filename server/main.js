@@ -12,6 +12,7 @@ let counter = 0
 http.listen(port, () => console.log('listening on port ' + port));
 
 io.on("connection", socket => {
+  console.log("A user connected");
   let first_time = true;
   socket.on("disconnect", function() {
     console.log("A user disconnected");
