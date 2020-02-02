@@ -48,7 +48,7 @@ class Canvas extends Component {
 
   drawLine(x0, y0, x1, y1, color) {
     const canvas = this.refs.canvas
-    const context = canvas.getContext("2d")
+    const context = canvas.getContext("2d");
     context.beginPath();
     context.lineCap = 'round';
     context.moveTo(x0, y0);
@@ -57,18 +57,6 @@ class Canvas extends Component {
     context.lineWidth = 4;
     context.stroke();
     context.closePath();
-
-    // if (!emit) { return; }
-    // var w = canvas.width;
-    // var h = canvas.height;
-    //
-    // socket.emit('drawing', {
-    //   x0: x0 / w,
-    //   y0: y0 / h,
-    //   x1: x1 / w,
-    //   y1: y1 / h,
-    //   color: color
-    // });
   }
 
   // updateCanvas() {
@@ -91,13 +79,8 @@ class Canvas extends Component {
   render() {
     return (
       <div id="container" >
-        <canvas ref="canvas" id="imageView" onMouseMove={this._onMouseMove.bind(this)} style={{ "border": "1px solid black" }}>
-          <p>Unfortunately, your browser is currently unsupported by our web application. We are sorry for the
-              inconvenience. Please use one of the supported browsers listed below, or draw the image you want using
-                  an offline tool.</p>
-          <p>Supported browsers: <a href="https://www.opera.com">Opera</a>, <a
-            href="http://www.mozilla.com">Firefox</a>, <a href="http://www.apple.com/safari">Safari</a>, and <a
-              href="http://www.konqueror.org">Konqueror</a>.</p>
+        <canvas ref="canvas" id="imageView" onMouseMove={this._onMouseMove.bind(this)} style={{ "borderLeft": "1px solid black" }}>
+
         </canvas>
       </div>
     );
