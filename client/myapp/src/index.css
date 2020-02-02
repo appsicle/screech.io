@@ -84,3 +84,17 @@ code {
 .color.pink { background-color: pink; }
 .color.fuchia { background-color: fuchsia; }
 .color.dimgray { background-color: dimgray; }
+
+.start-game{
+  display: inline-block;
+  flex: 1;
+  height: 50px;
+  width: 100px;
+}
+
+.timer{
+  /* position: absolute;
+  right: 5%;
+  top: 5%; */
+  font-size: 24px;
+}
